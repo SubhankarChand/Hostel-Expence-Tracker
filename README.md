@@ -112,7 +112,7 @@ Before you begin, ensure you have installed:
 git clone https://github.com/yourusername/hostel-split.git
 cd hostel-split
 ```
-2. Setup Database
+## 2. Setup Database
 Open pgAdmin or psql and run:
 
 sql
@@ -121,9 +121,9 @@ CREATE DATABASE hostel_split;
 
 -- Copy the entire contents of database.sql file and run it
 -- (database.sql is included in the root folder)
-3. Backend Setup
-# Navigate to backend folder
+## 3. Backend Setup
 ```bash
+# Navigate to backend folder
 cd hostel-split-api
 ```
 
@@ -151,39 +151,36 @@ DB_USER=postgres
 DB_PASSWORD=your_actual_password_here
 DB_NAME=hostel_split
 JWT_SECRET=your_super_secret_key_change_this
-```
 4. Frontend Setup
+```
 ```bash
 # Open new terminal, navigate to frontend folder
 cd hostel-split-app
-```
 
 # Install dependencies
-```bash
 npm install
 ``` 
 5. Run the Application
 Option A: One-Command Startup (Windows)
-```bash
+
+bash
 # From root folder
 start.bat
-```
-
 Option B: Manual Startup (Two Terminals)
+
 Terminal 1 - Backend:
 
 ```bash
 cd hostel-split-api
 npm run dev
 ```
-
-Terminal 2 - Frontend:
+### Terminal 2 - Frontend:
 
 ```bash
 cd hostel-split-app
 npm run dev
 ```
-6. Access the Application
+## 6. Access the Application
 Frontend: http://localhost:5173
 
 Backend API: http://localhost:5000
@@ -195,6 +192,7 @@ Create a screenshots folder in your project root:
 text
 Hostel_Expence_tracker/
 ├── screenshots/           ← Create this folder
+│   ├── login-page.png
 │   ├── dashboard.png
 │   ├── room-view.png
 │   ├── profile.png
@@ -204,9 +202,11 @@ Hostel_Expence_tracker/
 ├── hostel-split-api/
 ├── hostel-split-app/
 └── README.md
+Screenshots Gallery
+Login Page
+https://./screenshots/login-page.png
 
-Loginpage View
-https://./screenshots/Login_page.png
+User authentication page with signup and login options
 
 Dashboard View
 https://./screenshots/dashboard.png
@@ -376,7 +376,9 @@ DB_USER=postgres           # Database user
 DB_PASSWORD=your_password  # Database password
 DB_NAME=hostel_split       # Database name
 JWT_SECRET=your_secret     # JWT signing key
-Frontend (no .env needed for development)
+Frontend
+No .env needed for development
+
 🧪 Testing
 Test Database Connection
 bash
@@ -393,7 +395,7 @@ curl -X POST http://localhost:5000/api/auth/signup \
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@test.com","password":"123456"}'
-🚢 Deployment
+### 🚢 Deployment
 Deploy Backend (Render.com)
 Push code to GitHub
 
@@ -411,12 +413,13 @@ Start Command: node server.js
 
 Add environment variables
 
-Deploy
+### Deploy
 
 Deploy Frontend (Vercel)
-bash
+```bash
 cd hostel-split-app
 npm run build
+```
 Then deploy the dist folder to:
 
 Vercel: vercel --prod
@@ -428,7 +431,7 @@ GitHub Pages: Use gh-pages branch
 Update API URLs for Production
 In frontend files, replace http://localhost:5000 with your deployed backend URL.
 
-🤝 Contributing
+### 🤝 Contributing
 Fork the repository
 
 Create feature branch (git checkout -b feature/AmazingFeature)
@@ -523,3 +526,4 @@ Made with ❤️ for roommates everywhere
 Report Bug • Request Feature • Star on GitHub
 
 </div> ```
+
