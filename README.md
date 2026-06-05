@@ -168,174 +168,143 @@ start.bat
 ```
 - ✅ **Option B:** Manual Startup (Two Terminals)
 
-- Terminal 1 - Backend:
+ Terminal 1 - Backend:
 
 ```bash
 cd hostel-split-api
 npm run dev
 ```
-- Terminal 2 - Frontend:
+ Terminal 2 - Frontend:
 
 ```bash
 cd hostel-split-app
 npm run dev
 ```
-## 6. Access the Application
-Frontend: http://localhost:5173
+### 6. Access the Application
+- ✅ **Frontend:** http://localhost:5173
 
-Backend API: http://localhost:5000
+- ✅ **Backend API:** http://localhost:5000
 
-📸 Screenshots
-How to Add Screenshots to README
-Create a screenshots folder in your project root:
+### 6. Access the Application
+- ✅ **Frontend:** [http://localhost:5173](http://localhost:5173)
+- ✅ **Backend API:** [http://localhost:5000](http://localhost:5000)
 
-text
-Hostel_Expence_tracker/
-├── screenshots/           ← Create this folder
-│   ├── login-page.png
-│   ├── dashboard.png
-│   ├── room-view.png
-│   ├── profile.png
-│   ├── add-expense.png
-│   ├── settlements.png
-│   └── charts.png
-├── hostel-split-api/
-├── hostel-split-app/
-└── README.md
-Screenshots Gallery
-Login Page
-https://./screenshots/login-page.png
+---
 
+### 📸 Screenshots
+
+#### Login Page
+![Login Page](./screenshots/login-page.png)  
 User authentication page with signup and login options
 
-Dashboard View
-https://./screenshots/dashboard.png
-
+#### Dashboard View
+![Dashboard](./screenshots/dashboard.png)  
 Main dashboard showing all rooms and create room option
 
-Room View with Expenses
-https://./screenshots/room-view.png
-
+#### Room View with Expenses
+![Room View](./screenshots/room-view.png)  
 Room dashboard with expense timeline and balance summary
 
-Profile with Unique ID
-https://./screenshots/profile.png
-
+#### Profile with Unique ID
+![Profile](./screenshots/profile.png)  
 User profile showing Personal System Member Token ID
 
-Add Expense Modal
-https://./screenshots/add-expense.png
-
+#### Add Expense Modal
+![Add Expense](./screenshots/add-expense.png)  
 Add expense with equal or exact split options
 
-Settlement Suggestions
-https://./screenshots/settlements.png
-
+#### Settlement Suggestions
+![Settlements](./screenshots/settlements.png)  
 Smart settlement plan showing who pays whom
 
-Analytics Charts
-https://./screenshots/charts.png
-
+#### Analytics Charts
+![Charts](./screenshots/charts.png)  
 Pie chart showing spending distribution
 
-🎯 Usage Guide
-1. Sign Up / Login
-Click "Sign Up" to create a new account
+---
 
-Enter your full name, email, and password
+### 🎯 Usage Guide
 
-Save your Unique ID (e.g., HS-A8F2-99) - you'll need this to join rooms
+1. **Sign Up / Login**
+   - Click "Sign Up" to create a new account  
+   - Enter your full name, email, and password  
+   - Save your Unique ID (e.g., HS-A8F2-99) – you'll need this to join rooms  
+   - Login with your email and password  
 
-Login with your email and password
+2. **Create a Room**
+   - Click "Spawn Space" or "Create Space"  
+   - Enter room name (e.g., "Room 404", "Goa Trip")  
+   - Select room type: 🏡 Hostel | ✈️ Trip | 🍳 Mess  
+   - Share the Room Code with friends  
 
-2. Create a Room
-Click "Spawn Space" or "Create Space"
+3. **Join a Room**
+   - Click "Join Room" in dashboard  
+   - Enter the room code shared by admin  
+   - Wait for admin approval  
+   - Admin will receive notification with your details  
 
-Enter room name (e.g., "Room 404", "Goa Trip")
+4. **Add Members (Admin Only)**
+   - Go to your room  
+   - Scroll to "Add Roommate" section  
+   - Enter friend's Email + Unique ID  
+   - Click "Add Member to Room"  
 
-Select room type: 🏡 Hostel | ✈️ Trip | 🍳 Mess
+5. **Add an Expense**
+   - In room view, fill the expense form:  
+     - Description: "Pizza night", "Electricity bill"  
+     - Amount: Total bill amount  
+     - Category: Food, Rent, Utilities, Other  
+   - Choose split method:  
+     - Split Equally: Everyone pays same amount  
+     - Exact Amounts: Enter custom amounts per person  
+   - Click "Save Expense"  
 
-Share the Room Code with friends
+6. **Settle Debts**
+   - Click "Show Settlements" button  
+   - View suggested payments:  
+     ```text
+     Rahul → Priya: ₹450
+     Amit → Priya: ₹120
+     ```
+   - Make payments via UPI/Cash  
+   - Balances update automatically  
 
-3. Join a Room
-Click "Join Room" in dashboard
+7. **Export Data**
+   - Click "Export CSV" button  
+   - File downloads with all expenses  
+   - Open in Excel/Google Sheets  
 
-Enter the room code shared by admin
+8. **Delete Expenses (Admin Only)**
+   - Clear Week: Delete last 7 days of expenses  
+   - Clear Month: Delete last 30 days of expenses  
 
-Wait for admin approval
+---
 
-Admin will receive notification with your details
+### 📡 API Endpoints
 
-4. Add Members (Admin Only)
-Go to your room
+| Method | Endpoint                                | Description              | Auth |
+|--------|-----------------------------------------|--------------------------|------|
+| POST   | /api/auth/signup                        | Register new user        | ❌   |
+| POST   | /api/auth/login                         | User login               | ❌   |
+| GET    | /api/rooms                              | Get user's rooms         | ✅   |
+| POST   | /api/rooms                              | Create new room          | ✅   |
+| DELETE | /api/rooms/:roomId                      | Delete room              | ✅   |
+| GET    | /api/rooms/:roomId/data                 | Get room details         | ✅   |
+| POST   | /api/expenses                           | Add expense              | ✅   |
+| DELETE | /api/rooms/:roomId/expenses/purge       | Delete expenses          | ✅   |
+| POST   | /api/rooms/:roomId/members              | Add member               | ✅   |
+| POST   | /api/rooms/:roomId/join-request         | Request to join          | ✅   |
+| GET    | /api/rooms/:roomId/pending-requests     | Get join requests        | ✅   |
+| POST   | /api/rooms/:roomId/approve-request      | Approve/reject request   | ✅   |
+| GET    | /api/rooms/:roomId/settlements          | Get settlement plan      | ✅   |
+| GET    | /api/rooms/:roomId/export               | Export expenses CSV      | ✅   |
 
-Scroll to "Add Roommate" section
+**Authentication:** Add `Authorization: Bearer <token>` header for protected routes.
 
-Enter friend's Email + Unique ID
+---
 
-Click "Add Member to Room"
+### 📁 Project Structure
 
-5. Add an Expense
-In room view, fill the expense form:
-
-Description: "Pizza night", "Electricity bill"
-
-Amount: Total bill amount
-
-Category: Food, Rent, Utilities, Other
-
-Choose split method:
-
-Split Equally: Everyone pays same amount
-
-Exact Amounts: Enter custom amounts per person
-
-Click "Save Expense"
-
-6. Settle Debts
-Click "Show Settlements" button
-
-View suggested payments:
-
-text
-Rahul → Priya: ₹450
-Amit → Priya: ₹120
-Make payments via UPI/Cash
-
-Balances update automatically
-
-7. Export Data
-Click "Export CSV" button
-
-File downloads with all expenses
-
-Open in Excel/Google Sheets
-
-8. Delete Expenses (Admin Only)
-Clear Week: Delete last 7 days of expenses
-
-Clear Month: Delete last 30 days of expenses
-
-📡 API Endpoints
-Method	Endpoint	Description	Auth
-POST	/api/auth/signup	Register new user	❌
-POST	/api/auth/login	User login	❌
-GET	/api/rooms	Get user's rooms	✅
-POST	/api/rooms	Create new room	✅
-DELETE	/api/rooms/:roomId	Delete room	✅
-GET	/api/rooms/:roomId/data	Get room details	✅
-POST	/api/expenses	Add expense	✅
-DELETE	/api/rooms/:roomId/expenses/purge	Delete expenses	✅
-POST	/api/rooms/:roomId/members	Add member	✅
-POST	/api/rooms/:roomId/join-request	Request to join	✅
-GET	/api/rooms/:roomId/pending-requests	Get join requests	✅
-POST	/api/rooms/:roomId/approve-request	Approve/reject request	✅
-GET	/api/rooms/:roomId/settlements	Get settlement plan	✅
-GET	/api/rooms/:roomId/export	Export expenses CSV	✅
-Authentication: Add Authorization: Bearer <token> header for protected routes
-
-📁 Project Structure
-text
 Hostel_Expence_tracker/
 │
 ├── screenshots/                    # Screenshots for README
@@ -366,164 +335,129 @@ Hostel_Expence_tracker/
 ├── start.bat                       # One-click startup
 ├── .gitignore                      # Git ignore rules
 └── README.md                       # This file
-🔒 Environment Variables
-Backend (.env)
-env
-PORT=5000                    # Server port
-DB_HOST=localhost           # Database host
-DB_PORT=5432               # Database port
-DB_USER=postgres           # Database user
-DB_PASSWORD=your_password  # Database password
-DB_NAME=hostel_split       # Database name
-JWT_SECRET=your_secret     # JWT signing key
-Frontend
-No .env needed for development
 
-🧪 Testing
-Test Database Connection
-bash
+---
+
+### 🔒 Environment Variables
+
+#### Backend (`.env`)
+```env
+PORT=5000                    # Server port
+DB_HOST=localhost            # Database host
+DB_PORT=5432                 # Database port
+DB_USER=postgres             # Database user
+DB_PASSWORD=your_password    # Database password
+DB_NAME=hostel_split         # Database name
+JWT_SECRET=your_secret       # JWT signing key
+```
+
+---
+
+#### 🧪 Test Database Connection
+```bash
 cd hostel-split-api
 node -e "import('./server.js').then(() => console.log('✅ DB Connected'))"
-Test API (using curl)
-bash
-# Signup
+``` 
+
+### Signup
+```bash
 curl -X POST http://localhost:5000/api/auth/signup \
   -H "Content-Type: application/json" \
   -d '{"full_name":"Test","email":"test@test.com","password":"123456"}'
+```
 
-# Login
+### Login
+```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@test.com","password":"123456"}'
+```
+
+### Login
+```bash
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","password":"123456"}'
+  ```
+  ---
+
 ### 🚢 Deployment
-Deploy Backend (Render.com)
-Push code to GitHub
 
-Go to Render.com
+#### Deploy Backend (Render.com)
+1. Push code to GitHub  
+2. Go to [Render.com](https://render.com)  
+3. Create new **Web Service**  
+4. Connect your repository  
+5. Set:
+   - **Build Command:** `npm install`  
+   - **Start Command:** `node server.js`  
+6. Add environment variables  
 
-Create new Web Service
+---
 
-Connect your repository
+#### Deploy Frontend (Vercel / Netlify / GitHub Pages)
 
-Set:
+```bash
+cd hostel-split-app
+npm run build
 
-Build Command: npm install
+  ---
 
-Start Command: node server.js
+#### Deploy Frontend (Vercel / Netlify / GitHub Pages)
 
-Add environment variables
-
-### Deploy
-
-Deploy Frontend (Vercel)
 ```bash
 cd hostel-split-app
 npm run build
 ```
-Then deploy the dist folder to:
-
-Vercel: vercel --prod
-
-Netlify: Drag dist folder to Netlify
-
-GitHub Pages: Use gh-pages branch
-
-Update API URLs for Production
-In frontend files, replace http://localhost:5000 with your deployed backend URL.
 
 ### 🤝 Contributing
-Fork the repository
+1. Fork the repository
 
-Create feature branch (git checkout -b feature/AmazingFeature)
+2. Create feature branch:
+```bash
+git checkout -b feature/AmazingFeature
+```
+3. Commit changes:
+```bash
+git commit -m 'Add AmazingFeature'
+```
+4. Push to branch:
+```bash
+git push origin feature/AmazingFeature
+```
+5. Open Pull Request
 
-Commit changes (git commit -m 'Add AmazingFeature')
+- **Development Guidelines**
 
-Push to branch (git push origin feature/AmazingFeature)
+- Follow existing code style
+- Add comments for complex logic
+- Test before submitting PR
+- Update documentation if needed
 
-Open Pull Request
+### 📝 License
+This project is licensed under the MIT License – see below:
 
-Development Guidelines
-Follow existing code style
+### 👨‍💻 Author
+- Name: Subhankar Chand
 
-Add comments for complex logic
+- GitHub: @SubhankarChand ([github.com in Bing](https://github.com/SubhankarChand))
 
-Test before submitting PR
+- Email: subhankarchand66@gmail.com
 
-Update documentation if needed
+### 🙏 Acknowledgments
+- **Icons:** Lucide React(https://lucide.dev/?utm_source=copilot.com)
 
-📝 License
-This project is licensed under the MIT License - see below:
+- **Charts:** Recharts(https://recharts.github.io/?utm_source=copilot.com)
 
-text
-MIT License
+- **UI Inspiration:** Modern expense tracking apps
 
-Copyright (c) 2024 Subhankar Chand
+- **Contributors:** Thanks to all who tested and provided feedback
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions...
-
-Full license text: https://opensource.org/licenses/MIT
-👨‍💻 Author
-Subhankar Chand
-
-GitHub: @yourusername
-
-Email: subhankarchand66@gmail.com
-
-🙏 Acknowledgments
-Icons: Lucide React
-
-Charts: Recharts
-
-UI Inspiration: Modern expense tracking apps
-
-Contributors: Thanks to all who tested and provided feedback
-
-📞 Support
-Having issues? Here's how to get help:
-
-Check the Issues page
-
-Create a new issue with:
-
-Description of the problem
-
-Steps to reproduce
-
-Screenshots (if applicable)
-
-Error messages
-
-Contact author via email
-
-🎯 Roadmap
-Dark mode support
-
-Email notifications
-
-Recurring expenses (monthly rent)
-
-Mobile app (React Native)
-
-Receipt image upload
-
-Group chat feature
-
-Budget alerts
-
-Multi-currency support
-
-⭐ Show Your Support
+### ⭐ Show Your Support
 If you found this project helpful, please give it a ⭐ on GitHub!
 
 <div align="center">
 Made with ❤️ for roommates everywhere
 
 Report Bug • Request Feature • Star on GitHub
-
-</div> ```
-
+</div>
