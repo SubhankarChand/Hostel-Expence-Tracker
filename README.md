@@ -128,23 +128,20 @@ CREATE DATABASE hostel_split;
 cd hostel-split-api
 ```
 
-# Install dependencies
+## Install dependencies
 ```bash
 npm install
 ```
 
-# Create environment file
+## Create environment file
 ```bash
 cp .env.example .env
 ```
 
-# Edit .env with your database credentials
-# Open .env and update:
-#   DB_PASSWORD=your_postgres_password
-#   JWT_SECRET=your_secret_key
+- Edit .env with your database credentials
+### Open .env and update:
 Example .env file:
 ```bash
-env
 PORT=5000
 DB_HOST=localhost
 DB_PORT=5432
@@ -152,8 +149,9 @@ DB_USER=postgres
 DB_PASSWORD=your_actual_password_here
 DB_NAME=hostel_split
 JWT_SECRET=your_super_secret_key_change_this
-4. Frontend Setup
 ```
+### 4. Frontend Setup
+
 ```bash
 # Open new terminal, navigate to frontend folder
 cd hostel-split-app
@@ -161,21 +159,22 @@ cd hostel-split-app
 # Install dependencies
 npm install
 ``` 
-5. Run the Application
-Option A: One-Command Startup (Windows)
+### 5. Run the Application
+- ✅ **Option A:** One-Command Startup (Windows)
 
-bash
+```bash
 # From root folder
 start.bat
-Option B: Manual Startup (Two Terminals)
+```
+- ✅ **Option B:** Manual Startup (Two Terminals)
 
-Terminal 1 - Backend:
+- Terminal 1 - Backend:
 
 ```bash
 cd hostel-split-api
 npm run dev
 ```
-### Terminal 2 - Frontend:
+- Terminal 2 - Frontend:
 
 ```bash
 cd hostel-split-app
