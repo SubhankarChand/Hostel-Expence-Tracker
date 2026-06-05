@@ -1,3 +1,4 @@
+import nodemailer from 'nodemailer';
 import express from 'express';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
@@ -7,6 +8,15 @@ import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
 
 dotenv.config();
+
+// Email configuration
+const emailTransporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 const { Pool } = pkg;
 const app = express();
@@ -641,6 +651,137 @@ app.post('/api/rooms/:roomId/approve-request', authenticateToken, async (req, re
         } else {
             res.status(400).json({ error: 'Invalid action' });
         }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+// ============ NEW: SEND SETTLEMENT EMAIL ============
+app.post('/api/rooms/:roomId/send-settlement-email', authenticateToken, async (req, res) => {
+    const { roomId } = req.params;
+
+    try {
+        // Get room details
+        const roomResult = await pool.query('SELECT * FROM rooms WHERE id = $1', [roomId]);
+        const room = roomResult.rows[0];
+
+        // Get all members
+        const membersResult = await pool.query(
+            `SELECT u.id, u.full_name, u.email 
+             FROM users u 
+             JOIN room_members rm ON u.id = rm.user_id 
+             WHERE rm.room_id = $1`,
+            [roomId]
+        );
+        const members = membersResult.rows;
+
+        // Get settlements
+        const settlementsResult = await pool.query(
+            `SELECT 
+                u1.full_name as from_name,
+                u2.full_name as to_name,
+                COALESCE(SUM(CASE WHEN e.paid_by = u2.id THEN e.amount ELSE 0 END), 0) - 
+                COALESCE(SUM(es.amount_owed), 0) as net
+             FROM users u1
+             CROSS JOIN users u2
+             LEFT JOIN expenses e ON e.paid_by = u2.id AND e.room_id = $1
+             LEFT JOIN expense_splits es ON es.user_id = u1.id
+             LEFT JOIN expenses e2 ON es.expense_id = e2.id AND e2.room_id = $1
+             WHERE u1.id IN (SELECT user_id FROM room_members WHERE room_id = $1)
+             AND u2.id IN (SELECT user_id FROM room_members WHERE room_id = $1)
+             GROUP BY u1.id, u1.full_name, u2.id, u2.full_name
+             HAVING COALESCE(SUM(CASE WHEN e.paid_by = u2.id THEN e.amount ELSE 0 END), 0) > 
+                    COALESCE(SUM(es.amount_owed), 0)`,
+            [roomId]
+        );
+
+        // Generate HTML email
+        let settlementsHtml = '<table border="1" cellpadding="10" style="border-collapse: collapse; width: 100%;">';
+        settlementsHtml += '<tr style="background-color: #f3f4f6;"><th>From</th><th>To</th><th>Amount</th></tr>';
+        
+        settlementsResult.rows.forEach(s => {
+            if (s.net > 0) {
+                settlementsHtml += `<tr><td>${s.from_name}</td><td>${s.to_name}</td><td>₹${s.net.toFixed(2)}</td></tr>`;
+            }
+        });
+        settlementsHtml += '</table>';
+
+        // Send email to all members
+        for (const member of members) {
+            await emailTransporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: member.email,
+                subject: `💰 Settlement Summary for ${room.name}`,
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                        <h2 style="color: #4F46E5;">🏠 HostelSplit - Settlement Summary</h2>
+                        <h3>Room: ${room.name}</h3>
+                        <p>Hello ${member.full_name},</p>
+                        <p>Here's the current settlement status for your room:</p>
+                        ${settlementsHtml}
+                        <p style="margin-top: 20px; color: #6B7280;">Log in to HostelSplit to settle up!</p>
+                        <hr>
+                        <p style="font-size: 12px; color: #9CA3AF;">This is an automated message from HostelSplit.</p>
+                    </div>
+                `
+            });
+        }
+
+        res.json({ message: `Settlement email sent to ${members.length} members` });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to send emails' });
+    }
+});
+
+// ============ NEW: MARK SETTLEMENT AS CLEARED ============
+app.post('/api/rooms/:roomId/settle-payment', authenticateToken, async (req, res) => {
+    const { roomId } = req.params;
+    const { from_user_id, to_user_id, amount } = req.body;
+
+    try {
+        // Record settlement transaction
+        await pool.query(
+            `INSERT INTO settlements (room_id, from_user_id, to_user_id, amount, settled_by, settled_at) 
+             VALUES ($1, $2, $3, $4, $5, NOW())`,
+            [roomId, from_user_id, to_user_id, amount, req.user.id]
+        );
+
+        // Create a settlement expense record (optional - for history)
+        const expenseId = uuidv4();
+        await pool.query(
+            `INSERT INTO expenses (id, room_id, paid_by, amount, description, category, split_type) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [expenseId, roomId, to_user_id, amount, `Settlement payment from ${from_user_id} to ${to_user_id}`, 'Settlement', 'manual']
+        );
+
+        res.json({ message: 'Payment recorded successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to record settlement' });
+    }
+});
+
+// ============ NEW: GET SETTLEMENT HISTORY ============
+app.get('/api/rooms/:roomId/settlement-history', authenticateToken, async (req, res) => {
+    const { roomId } = req.params;
+
+    try {
+        const result = await pool.query(
+            `SELECT s.*, 
+                    u1.full_name as from_name, 
+                    u2.full_name as to_name,
+                    u3.full_name as settled_by_name
+             FROM settlements s
+             JOIN users u1 ON s.from_user_id = u1.id
+             JOIN users u2 ON s.to_user_id = u2.id
+             JOIN users u3 ON s.settled_by = u3.id
+             WHERE s.room_id = $1
+             ORDER BY s.settled_at DESC`,
+            [roomId]
+        );
+
+        res.json(result.rows);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' });

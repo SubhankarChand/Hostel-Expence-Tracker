@@ -440,17 +440,11 @@ This project is licensed under the MIT License – see below:
 ### 👨‍💻 Author
 - Name: Subhankar Chand
 
-- GitHub: @SubhankarChand ([github.com in Bing](https://github.com/SubhankarChand))
+- GitHub: @SubhankarChand ([github.com](https://github.com/SubhankarChand))
 
 - Email: subhankarchand66@gmail.com
 
 ### 🙏 Acknowledgments
-- **Icons:** Lucide React(https://lucide.dev/?utm_source=copilot.com)
-
-- **Charts:** Recharts(https://recharts.github.io/?utm_source=copilot.com)
-
-- **UI Inspiration:** Modern expense tracking apps
-
 - **Contributors:** Thanks to all who tested and provided feedback
 
 ### ⭐ Show Your Support
