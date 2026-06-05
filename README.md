@@ -112,16 +112,17 @@ Before you begin, ensure you have installed:
 git clone https://github.com/yourusername/hostel-split.git
 cd hostel-split
 ```
-## 2. Setup Database
+### 2. Setup Database
 Open pgAdmin or psql and run:
 
-sql
+```sql
 -- Create database
 CREATE DATABASE hostel_split;
 
 -- Copy the entire contents of database.sql file and run it
 -- (database.sql is included in the root folder)
-## 3. Backend Setup
+```
+### 3. Backend Setup
 ```bash
 # Navigate to backend folder
 cd hostel-split-api
